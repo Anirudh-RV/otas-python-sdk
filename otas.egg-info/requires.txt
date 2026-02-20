@@ -1,0 +1,8 @@
+requests>=2.31
+django>=4.0
+
+[dev]
+pytest
+pytest-django
+black
+ruff

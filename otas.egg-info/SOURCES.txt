@@ -1,0 +1,13 @@
+README.md
+pyproject.toml
+otas/__init__.py
+otas/auth.py
+otas/client.py
+otas/constants.py
+otas/exceptions.py
+otas/middleware.py
+otas.egg-info/PKG-INFO
+otas.egg-info/SOURCES.txt
+otas.egg-info/dependency_links.txt
+otas.egg-info/requires.txt
+otas.egg-info/top_level.txt

@@ -1,3 +1,18 @@
+Metadata-Version: 2.4
+Name: otas
+Version: 0.1.0
+Summary: Django middleware library for capturing Agent traffic and sending it to the OTAS platform.
+License: MIT
+Requires-Python: >=3.10
+Description-Content-Type: text/markdown
+Requires-Dist: requests>=2.31
+Requires-Dist: django>=4.0
+Provides-Extra: dev
+Requires-Dist: pytest; extra == "dev"
+Requires-Dist: pytest-django; extra == "dev"
+Requires-Dist: black; extra == "dev"
+Requires-Dist: ruff; extra == "dev"
+
 # otas-python-sdk
 
 > Python middleware for capturing all API traffic and forwarding it to the OTAS platform.
