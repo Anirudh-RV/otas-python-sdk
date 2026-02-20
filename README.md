@@ -120,3 +120,14 @@ OtasConfigurationError: OTAS_SDK_KEY environment variable is not set.
 Export it before starting the server:
   export OTAS_SDK_KEY='otas_...'
 ```
+
+## Local Testing
+
+1. Install the SDK locally: pip install -e .
+2. Go to the test/testsdk folder. This contains a dummy django project to test things with
+3. Run
+
+> export OTAS_SDK_KEY='<your-sdk-key>'
+> python manage.py runserver
+
+4. Test your new features

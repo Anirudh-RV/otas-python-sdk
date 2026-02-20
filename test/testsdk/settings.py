@@ -50,6 +50,7 @@ MIDDLEWARE = [
     "otas.OtasMiddleware", # OTAS Middleware
 ]
 
+# Logging visibility for OTAS
 LOGGING = {
     "version": 1,
     "handlers": {
