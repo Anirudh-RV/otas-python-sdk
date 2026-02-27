@@ -20,6 +20,7 @@ pip install -e .
 
 ```bash
 export OTAS_SDK_KEY="otas_PocKPi56xDI_..."
+export OTAS_SENSITIVE_HEADERS="Authorization,Cookie,X-Internal-Token"
 ```
 
 > **Never hard-code your SDK key in source files.** For production, set this through your process manager, container environment (e.g. Docker/Kubernetes secrets), or a dedicated secrets manager (e.g. AWS Secrets Manager, HashiCorp Vault).

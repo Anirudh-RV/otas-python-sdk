@@ -14,6 +14,7 @@ class OtasClient:
 
         self.sdk_key = sdk_key
         self._credentials: dict | None = None
+        self.base_url = 'http://localhost:8002/'
 
     def authenticate(self) -> "OtasClient":
         """

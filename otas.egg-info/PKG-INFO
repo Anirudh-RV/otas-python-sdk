@@ -35,6 +35,7 @@ pip install -e .
 
 ```bash
 export OTAS_SDK_KEY="otas_PocKPi56xDI_..."
+export OTAS_SENSITIVE_HEADERS="Authorization,Cookie,X-Internal-Token"
 ```
 
 > **Never hard-code your SDK key in source files.** For production, set this through your process manager, container environment (e.g. Docker/Kubernetes secrets), or a dedicated secrets manager (e.g. AWS Secrets Manager, HashiCorp Vault).
@@ -135,3 +136,14 @@ OtasConfigurationError: OTAS_SDK_KEY environment variable is not set.
 Export it before starting the server:
   export OTAS_SDK_KEY='otas_...'
 ```
+
+## Local Testing
+
+1. Install the SDK locally: pip install -e .
+2. Go to the test/testsdk folder. This contains a dummy django project to test things with
+3. Run
+
+> export OTAS_SDK_KEY='<your-sdk-key>'
+> python manage.py runserver
+
+4. Test your new features

@@ -5,6 +5,7 @@ otas/auth.py
 otas/client.py
 otas/constants.py
 otas/exceptions.py
+otas/logger.py
 otas/middleware.py
 otas.egg-info/PKG-INFO
 otas.egg-info/SOURCES.txt
