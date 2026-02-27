@@ -16,9 +16,6 @@ class API(View):
         Dummy GET endpoint.
         Echoes query parameters.
         """
-        
-        raise Exception()
-
         data = {
             "message": "GET API called",
             "method": "GET",

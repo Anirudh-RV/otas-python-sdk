@@ -7,16 +7,16 @@ import requests
 
 from django.utils import timezone
 from django.http import StreamingHttpResponse
-from django.utils.deprecation import MiddlewareMixin
 
 from .client import OtasClient
 from .exceptions import OtasConfigurationError
 from .logger import logger
 from .constants import OTAS_LOG_ENDPOINT, MAX_BODY_SIZE
+import threading
+from django.core.signals import got_request_exception
 
 
-
-class OtasMiddleware(MiddlewareMixin):
+class OtasMiddleware:
 
     DEFAULT_SENSITIVE_HEADERS: Set[str] = {
         "authorization",
@@ -30,10 +30,12 @@ class OtasMiddleware(MiddlewareMixin):
     # Initialization
     # ------------------------------------------------------------------ #
 
-    def __init__(self, get_response=None):
-        super().__init__(get_response)
+    def __init__(self, get_response, *args, **kwargs):
+        self.get_response = get_response
         self.client = self._initialize_client()
         self.sensitive_headers = self._load_sensitive_headers()
+        self._local = threading.local()
+        got_request_exception.connect(self._on_exception)
 
     def _initialize_client(self) -> OtasClient:
         sdk_key = os.environ.get("OTAS_SDK_KEY")
@@ -60,6 +62,11 @@ class OtasMiddleware(MiddlewareMixin):
             if h.strip()
         }
         return self.DEFAULT_SENSITIVE_HEADERS.union(parsed)
+    
+    def _on_exception(self, sender, request, **kwargs):
+        import sys
+        exc_type, exc_value, exc_tb = sys.exc_info()
+        self._local.exception = exc_value
 
     # ------------------------------------------------------------------ #
     # Request lifecycle
@@ -68,54 +75,29 @@ class OtasMiddleware(MiddlewareMixin):
     def __call__(self, request):
         request._otas_start_time = time.perf_counter()
         request._otas_request_data = self._capture_request(request)
+        self._local.exception = None  # reset for this request
 
         response = self.get_response(request)
 
-        latency_ms = (
-            time.perf_counter() - request._otas_start_time
-        ) * 1000
-
+        latency_ms = (time.perf_counter() - request._otas_start_time) * 1000
         response_data = self._capture_response(response)
 
+        # Grab exception captured via signal
+        captured_exception = self._local.exception
+        
+        if captured_exception:
+            response_data["response_body"] = ""
+            response_data["response_size_bytes"] = 0
+
         payload = self._build_payload(
             request=request,
             response_data=response_data,
             latency_ms=latency_ms,
-            error=None,
+            error=repr(captured_exception) if captured_exception else None,
         )
-
         self._send_to_otas(payload)
-
         return response
-
-    # ------------------------------------------------------------------ #
-    # Exception handling
-    # ------------------------------------------------------------------ #
-
-    def process_exception(self, request, exception):
-        latency_ms = (
-            time.perf_counter()
-            - getattr(request, "_otas_start_time", time.perf_counter())
-        ) * 1000
-
-        response_data = {
-            "status_code": 500,
-            "response_headers": "{}",
-            "response_body": "",
-            "response_size_bytes": 0,
-            "response_content_type": None,
-        }
-
-        payload = self._build_payload(
-            request=request,
-            response_data=response_data,
-            latency_ms=latency_ms,
-            error=str(exception),
-        )
-
-        self._send_to_otas(payload)
-
-        return None  # Let Django handle exception normally
+    
 
     # ------------------------------------------------------------------ #
     # Capture logic
