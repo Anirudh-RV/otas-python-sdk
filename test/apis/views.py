@@ -16,6 +16,8 @@ class API(View):
         Dummy GET endpoint.
         Echoes query parameters.
         """
+        
+        
         data = {
             "message": "GET API called",
             "method": "GET",

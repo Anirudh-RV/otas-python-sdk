@@ -132,3 +132,8 @@ Export it before starting the server:
 > python manage.py runserver
 
 4. Test your new features
+
+## Improvements
+
+1. Batch API call for multiple events at once instead of each event having an API call
+2. Having this Batch API call happen in another thread so as to not interrupt the regular flow of the web server
